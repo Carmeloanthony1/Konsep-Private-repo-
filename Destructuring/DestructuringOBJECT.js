@@ -26,8 +26,22 @@ console.log(user.role); */
 };
 
 const {nama, ram, disk} = produk;
-console.log(produk.nama, produk.ram, produk.disk);*/
+console.log(produk.nama, produk.ram, produk.disk);
 
 const koordinat = [120, -45, 88];
 const [x, y, z] = koordinat;
 console.log(x, z, z);
+
+
+const koordinat = [120, -45, 88];
+const [x, y, z] = koordinat;
+console.log(x, z, z); */
+
+const hero = {
+    username: "RusdiGamer",
+    level: 99,
+    role: "Assassin"
+};
+
+const {username, level, role} = hero;
+console.log(hero.username, hero.level, hero.role)
