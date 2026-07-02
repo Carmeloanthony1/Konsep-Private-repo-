@@ -43,5 +43,5 @@ const hero = {
     role: "Assassin"
 };
 
-const {username, level, role} = hero;
+const {username, level, role} = hero; //gableh pake 
 console.log(hero.username, hero.level, hero.role)
