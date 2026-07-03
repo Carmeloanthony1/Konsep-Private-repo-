@@ -1,6 +1,5 @@
 
 
-synchronus
 /* const namabarang = {
     barang_1 : 100,
     barang_2 : 200,
@@ -19,7 +18,6 @@ const cekgudang = (namabarang, callback) => {
 cekgudang(namabarang, (status) => {
     console.log(status);
 }) */
-asynchronus (nunggu sambil melakukan task lain, karena pekerjaannya di lakukan di background)
 /*const proseslogin = (email, password, callback) => {
     console.log("Sedang proses login...");
     setTimeout(() => {
@@ -31,7 +29,7 @@ asynchronus (nunggu sambil melakukan task lain, karena pekerjaannya di lakukan d
 proseslogin("melo@gmail.com", "1234", (status) => {
     console.log(status)}); */
 
-const ambilartikel = (id, callback) => {
+/*const ambilartikel = (id, callback) => {
     console.log(`Sedang mengambil artikel (id ke-${id})`);
     setTimeout(() => {
         const dataartikel = {
@@ -45,4 +43,16 @@ const ambilartikel = (id, callback) => {
 }
 ambilartikel(120291020, (dataartikel) => {
     console.log(dataartikel.judul)
-})
+})*/
+
+const inputnilai = (nama, nilai, callback) => {
+    console.log(`sedang memproses nilai ${nama}`);
+    setTimeout(() => {
+        if(nilai >70) callback("Selamat anda lulus", nama);
+        else callback("Maaf anda tidak lulus", nama);
+    }, 3000);
+};
+
+inputnilai("bebek", 90, (status, nama) => {
+    console.log(`${nama}: ${status}`);
+})  
