@@ -13,4 +13,7 @@ console.log("folder berhasil di buat!");
 const file_path = path.join(folder_path, "latihan.txt");
 
 fs.writeFileSync(file_path, "i love berak", 'utf-8');
+
+const isi_folder = fs.readdirSync(folder_path);
+console.log(`isi folder : ${isi_folder}`);
 console.log("File sudah di tulis")
