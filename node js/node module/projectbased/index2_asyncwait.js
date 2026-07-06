@@ -1,4 +1,4 @@
-const fs = require('fs').promises;
+const fs = require('fs').promises; //kalau pake async wait, harus pake promises
 const path = require('path');
 
 const folderpath = path.join(__dirname, 'logs');
