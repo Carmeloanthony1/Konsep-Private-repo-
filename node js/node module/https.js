@@ -1,12 +1,21 @@
-const event = require('events');
-//kalau suatu event tertrigger, nanti dia akan menjalankan sesuatu
-const event_trigger = new event();
+const http = require('http');
 
-event_trigger.on('login', (user) => {
-    console.log(`user login : ${user}`);
+const server = http.createServer((req, res) => {
+    if(req.url === '/'){
+        res.writehead(200, {'content-type' : 'text/plain'});
+        res.end('about');
+    } else if (req.url === '/about'){
+        res.writehead(200, {'content-type' : 'text/plain'});
+        res.end('about');
+    } else {
+        res.writehead(404, {'content-type' : 'text/plain'});
+        res.end('404 not found');
+    }
 });
 
-event_trigger.emit('login', 'joccelyn');
+server.listen(3000, () =>{
+    console.log("Server dijalankan");
+});
 
-//on itu nunggu objek nya di panggil
-//nanti si emit ini bakalan memicu nya
+//req info yang datang tadi website
+//res itu info yang dikirim ke website
