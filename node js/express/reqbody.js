@@ -20,6 +20,8 @@ app.put('/api/soal/:id', (req, res) => {
     soal[index].soal = req.body.soal;
     res.json({message: `soal: ${req.params.id} di update`, data: soal});
 });
+
+
 app.listen(3000, () => {
     console.log("Server berjalan di port 3000");
 })
