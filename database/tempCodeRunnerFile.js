@@ -33,31 +33,19 @@ app.post('/api/pertanyaan', (req, res) => {
     );
 });
 
-app.put('/api/pertanyaan/:id', (req, res) => {
+app.put('/app/pertanyaan/:id', (req, res) => {
     const {pertanyaan, tipe} = req.body;
     db.query('UPDATE SOAL SET pertanyaan = ?, tipe = ? WHERE ID = ?', [pertanyaan, tipe, req.params.id], (err, result) => {
         if(err){
             res.status(500).json({message: "Gagal mengupdate data", error: err.message});
             return;
         } else if(result.affectedRows === 0){ //kalau id nya ga ketemu maka
-            res.status(404).json({message: `${req.params.id} tidak di temukan`});
+            res.status(404).json({message: "ID tidak ditemukan", error: err.message});
             return;
         } else {
             res.status(200).json({message: "Berhasil mengupdate data", data: result});
         }
     })
-});
-
-app.delete('/api/pertanyaan/:id', (req, res) => {
-    db.query('DELETE FROM `SOAL` WHERE ID = ?', [req.params.id], (err, result) => {
-        if(err){
-            res.status(500).json({message: "GAGAL MENGHAPUS DATA", error: err.message});
-            return;
-        } else if(result.affectedRows === 0 ){
-            res.status(404).json({message: `${req.params.id} tidak di temukan`});
-        }
-        res.status(200).json({message: "Berhasil menghapus data", data: result});
-    });
 });
 app.listen(3000, () => {
     console.log("Server berjalan di port 3000");
