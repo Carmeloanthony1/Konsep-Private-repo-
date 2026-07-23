@@ -23,7 +23,7 @@ function autoemail2(data){ //ini nama tekniknya itu destructuring
     console.log(`Halo ${nama}, role kamu sekarang ${role} dan kamu sekarang level ${level}`);
 }
 
-function autoemail3({ nama, role, level }){
+function autoemail3({ nama, role, level }){ //cara modern untuk destruturing 
     console.log(`Halo ${nama}, saat ini kamu role ${role} dan kamu level ${level}`);
 }
 autoemail(user1);

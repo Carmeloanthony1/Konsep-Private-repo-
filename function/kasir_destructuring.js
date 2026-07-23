@@ -17,7 +17,7 @@ function kasir ({ nama, totalbeli, diskon }){
     console.log(`Hai ${nama}, total belanjaan kamu ${totalbeli}, kamu dapat diskon ${diskon}, jadi totalnya ${hargasetelah_diskon}`);
 }
 
-function profilegenerator({username, role, statusAktif}, ...Hobi){ //rest parameter, misal dia mau langsung daruh di parametr untuk input bisa juga tinggal kasih ...
+function profilegenerator({username, role, statusAktif}, ...Hobi){ //rest parameter, misal dia mau langsung daruh di parametr untuk input bisa juga tinggal kasih ...   
     console.log("Profile generator");
     console.log(`Nama : ${username}`);
     console.log(`Role : ${role}`);
