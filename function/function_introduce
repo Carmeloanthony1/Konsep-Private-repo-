@@ -1,0 +1,26 @@
+function messageother(user) {
+    console.log(`GOOD MORNING ${user}`);
+}
+
+messageother('ZEZTS');
+messageother('VOID');
+messageother('Acer');
+
+function pertambahan(variabel) {
+    const hasil = 20 + variabel;
+    console.log(`Hasil dari pertambahan adalah ${hasil}`);
+}
+
+pertambahan(10);
+pertambahan(20);
+pertambahan(30);
+
+function perkenalan(nama, usia) {
+    const hasil_umur = usia + 10;
+    console.log(`Hai ${nama}, saat ini kamu berusia ${usia}, 10 tahun lagi kamu berusia ${hasil_umur}`);
+}
+
+perkenalan('alex', 10);
+perkenalan('jonathan', 20);
+perkenalan('ronaldo', 30); 
+
