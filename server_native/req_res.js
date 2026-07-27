@@ -12,7 +12,7 @@ const server = http.createServer((req, res) => {
         }));
     }
 
-    else if(url = '/api/profile' && method === 'GET'){
+    else if(url === '/api/profile' && method === 'GET'){
         const token = headers['authorization'];
         if(token === 'Rahasia123'){
             res.writeHead(200);
@@ -35,3 +35,7 @@ const server = http.createServer((req, res) => {
     }
 });
 
+const port = 3000;
+server.listen(port, () => {
+    console.log(`[LOG] server sudah tersambung di port ${port}`);
+});
