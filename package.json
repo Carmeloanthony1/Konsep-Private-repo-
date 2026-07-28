@@ -1,7 +1,7 @@
 {
   "name": "js-konsep-private-repo-",
   "version": "1.0.0",
-  "description": "",
+  "description": "Folder Repository ini merupakan folder private yang gunanya untuk melakukan tracking belajar konsep, khusus nya di seputaran bahasa Javascript dan Framework-frameworknya.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0"
@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Carmeloanthony1/JS-Konsep-Private-repo-/issues"
   },
-  "homepage": "https://github.com/Carmeloanthony1/JS-Konsep-Private-repo-#readme"
+  "homepage": "https://github.com/Carmeloanthony1/JS-Konsep-Private-repo-#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
