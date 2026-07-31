@@ -20,9 +20,32 @@ app.get('/api/produk', (req, res) => {
         });
     }
     return res.status(200).json({
-        message: `Produk dengan kategori ${kategori} telah di temukan, berikut daftarnya`,
+        message: `Produk dengan kategori yang di cari telah di temukan, berikut daftarnya`,
         total: hasil.length,
         hasil: hasil
+    });
+});
+
+app.post('/api/produk', (req, res) => {
+    const { nama, kategori, harga, stok } = req.body;
+    if(!nama || !kategori || !harga || !stok){
+        return res.status(404).json({
+            error: "Silahkan mengisi seluruh bagan yang di perlukan"
+        });
+    }
+    const produkbaru = {
+        id: daftarProduk.length + 1,
+        nama: nama,
+        kategori:kategori,
+        harga:harga,
+        stok:stok
+    }
+    daftarProduk.push(produkbaru);
+
+    return res.status(201).json({
+        message: `Berhasil menambahkan produk, berikut data mengenai produk yang baru di tambahkan`,
+        total: daftarProduk.length,
+        hasil: produkbaru
     });
 });
 
