@@ -74,6 +74,24 @@ app.put('/api/produk/:id', (req, res) => {
         hasil: daftarProduk[index]
     })
 });
+
+app.delete('/api/produk/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const index = daftarProduk.findIndex(item => item.id === id);
+    if(index === -1){
+        return res.status(404).json({
+            error: "Index tidak di temukan"
+        });
+    }
+
+    const prosesmenghapus = daftarProduk.splice(index, 1);
+    return res.status(200).json({
+        message: `Berhasil menghapus index ke ${index}, menunjukkan data yang tersisa`,
+        data: daftarProduk
+    });
+});
+
 const port = 3000;
 app.listen(port, () => {
     console.log(`Server terkoneksi dengan port ${port}`);
