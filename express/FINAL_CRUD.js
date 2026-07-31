@@ -49,6 +49,31 @@ app.post('/api/produk', (req, res) => {
     });
 });
 
+app.put('/api/produk/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const { nama, kategori, harga, stok } = req.body;
+
+    const index = daftarProduk.findIndex(item => item.id === id);
+    if(index === -1){
+        return res.status(404).json({
+            error: `Index yang di cari tidak di temukan`
+        });
+    }
+    
+    daftarProduk[index] = {
+        id: id || daftarProduk[index].id,
+        nama: nama || daftarProduk[index].nama,
+        kategori: kategori || daftarProduk[index].kategori,
+        harga: harga || daftarProduk[index].harga,
+        stok: stok || daftarProduk[index].stok
+    }
+
+    return res.status(200).json({
+        message: `Produk index ke ${index}`,
+        total: daftarProduk.length,
+        hasil: daftarProduk[index]
+    })
+});
 const port = 3000;
 app.listen(port, () => {
     console.log(`Server terkoneksi dengan port ${port}`);
