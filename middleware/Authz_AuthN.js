@@ -23,7 +23,7 @@ const autentikasi_user = (req, res, next) => {
         return res.status(401).json({ error: "Token tidak di temnukan" });
     }
 
-    const token = authHeader.split('')[1]; //memisahkan bearer dengan token 
+    const token = authHeader.split(' ')[1]; //memisahkan bearer dengan token 
     if(!token){
         return res.status(401).json({ error: "Token tidak di temukan"});
     }
@@ -32,13 +32,13 @@ const autentikasi_user = (req, res, next) => {
         if(err){
             return res.status(403).json({ error: "Token tidak valid"}); //tokennya berubah atau tidak valid
         }; //semisal tokennya ga vallid, dia ga akan ke pecah
-        res.user = decodedData; //decoded data itu berisi seluruh informasi user misalnya id, username, role
+        req.user = decodedData; //decoded data itu berisi seluruh informasi user misalnya id, username, role
         next();
     });
 }
 
 const Authorization = (req, res, next) => {
-    if(req.user.role !== "admin"){
+    if(req.user.role === "admin"){
         next();
     } else {
         return res.status(403).json({
@@ -101,5 +101,10 @@ app.post('/api/products', autentikasi_user, Authorization, (req, res) => {
         total: product_list.length,
         data: produkbaru
     });
+});
+
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Server berjalan di http://localhost:${port}`);
 });
 
