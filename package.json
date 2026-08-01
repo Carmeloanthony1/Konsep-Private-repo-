@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Carmeloanthony1/JS-Konsep-Private-repo-#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3"
   }
 }
