@@ -71,3 +71,49 @@ app.post('/api/login', (req, res) => {
         token: tokenbaru
     });
 });
+
+app.get('/api/artikel', (req, res) => {
+    return res.status(200).json({
+        message: "Berhasil menampilkan artikel",
+        total: artikel.length,
+        hasil: artikel
+    });
+});
+
+app.post('/api/addartikel', autentikasi_user, (req, res) => {
+    const { judul, penulis } = req.body;
+    if(!judul || !penulis){
+        return res.status(400).json({
+            error: "Silahkan mengisi seluruh bagan yang di perlukan"
+        });
+    }
+
+    const artikelbaru = {
+        id: artikel.length + 1,
+        judul: judul,
+        penulis: penulis
+    }
+
+    artikel.push(artikelbaru);
+    
+    return res.status(201).json({
+        message: "Berhasil menambahkan artikel",
+        data: artikelbaru
+    });
+});
+
+app.delete('/api/deleteartikel/:id', autentikasi_user, authorization, (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = artikel.findIndex(item => item.id === id);
+    if(index === -1){
+        return res.status(404).json({
+            error: "Artikel tidka di temukan, tidak dapat menghapus"
+        });
+    }
+
+    const menghapus_artikel = artikel.splice(index, 1);
+    return res.status(200).json({
+        message: "Berhasil menghapus artikel",
+        data: artikel
+    });
+});
