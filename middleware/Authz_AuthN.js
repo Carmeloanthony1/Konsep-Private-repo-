@@ -28,12 +28,23 @@ const autentikasi_user = (req, res, next) => {
         return res.status(401).json({ error: "Token tidak di temukan"});
     }
 
-    jwt.verify(token, secretkey, (err, decodedData) => {
+    jwt.verify(token, secretkey, (err, decodedData) => { //secret key akan memecah token yang di kirimkan oleh user
         if(err){
             return res.status(403).json({ error: "Token tidak valid"}); //tokennya berubah atau tidak valid
-        };
-        res.user = decodedData;
+        }; //semisal tokennya ga vallid, dia ga akan ke pecah
+        res.user = decodedData; //decoded data itu berisi seluruh informasi user misalnya id, username, role
         next();
     });
 }
+
+const Authorization = (req, res, next) => {
+    if(req.user.role !== "admin"){
+        next();
+    } else {
+        return res.status(403).json({
+            error: "User tidak memiliki akses untuk mengakses page ini"
+        });
+    }
+};
+
 
