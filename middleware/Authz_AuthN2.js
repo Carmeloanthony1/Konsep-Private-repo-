@@ -113,7 +113,12 @@ app.delete('/api/deleteartikel/:id', autentikasi_user, authorization, (req, res)
 
     const menghapus_artikel = artikel.splice(index, 1);
     return res.status(200).json({
-        message: "Berhasil menghapus artikel",
+        message: `Berhasil menghapus artikel ${index + 1}`,
         data: artikel
     });
+});
+
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Server berjalan di port ${port}`);
 });
