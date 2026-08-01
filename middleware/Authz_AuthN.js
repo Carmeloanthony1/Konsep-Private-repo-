@@ -47,4 +47,26 @@ const Authorization = (req, res, next) => {
     }
 };
 
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body; 
+    const user = dataUser.find(u => u.username === username && u.password === password);
+    if(!user){
+        return res.status(401).json({ error: "Username atau password salah"});
+    }
+
+    const dataJWT = {
+        userID : user.id,
+        username : user.username,
+        role : user.role
+    };
+
+    const tokenbaru = jwt.sign(dataJWT, secretkey, { expiresIn: '1h' }); //token akan expired dalam 1 jam
+    return res.status(200).json({
+        message: "Login berhasil",
+        token: tokenbaru
+    });
+});
+
+
+
 
