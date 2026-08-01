@@ -40,3 +40,13 @@ const autentikasi_user = (req, res, next) => {
         next();
     });
 };
+
+const authorization = (req, res, next) => {
+    if(req.user.role === "admin"){
+        next();
+    } else {
+        return res.status(403).json({
+            error: "User tidak memiliki akses untuk akses ke page ini"
+        });
+    }
+};
