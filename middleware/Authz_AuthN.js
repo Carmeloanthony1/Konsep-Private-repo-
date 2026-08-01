@@ -67,6 +67,39 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+app.get('/api/products', (req, res) => {
+    return res.status(200).json({
+        message:"Berhasil menampilkan product",
+        data: product_list
+    });
+});
 
+app.get('/api/profile', autentikasi_user, (req, res) => {
+    return res.status(200).json({
+        message: "Berhasil menampilkan profile user",
+        data: req.user
+    });
+});
 
+app.post('/api/products', autentikasi_user, Authorization, (req, res) => {
+    const { nama, harga } = req.body;
+    if(!nama || !harga){
+        return res.status(400).json({
+            error: "Silahkan mengisi seluruh bagan yang di perlukan"
+        });
+    }
+
+    const produkbaru = {
+        id: product_list.length + 1,
+        nama: nama,
+        harga: harga
+    }
+
+    product_list.push(produkbaru);
+    return res.status(201).json({
+        message: "Berhasil menambahkan produk",
+        total: product_list.length,
+        data: produkbaru
+    });
+});
 
