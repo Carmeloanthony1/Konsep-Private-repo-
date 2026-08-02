@@ -39,7 +39,7 @@ app.post('/api/login', (req, res) => {
         httpOnly: true,
         secure: false, //kalau nanti https ganti jadi true
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 1000
+        maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     return res.status(200).json({
@@ -56,7 +56,7 @@ app.post('/api/refresh-token', (req, res) => {
         });
     }
 
-    if(!listRefreshToken){
+    if(!listRefreshToken.includes(token)){
         return res.status(403).json({
             error: "Token tidak valid"
         });
@@ -64,12 +64,12 @@ app.post('/api/refresh-token', (req, res) => {
 
     jwt.verify(token, RefreshToken, (err, decoded_Data) => {
         if(err){
-            return res.status(403),json({
+            return res.status(403).json({
                 error: "Refresh token sudah expired"
             });
         }
 
-        const user = users.find(u => u.id === decoded_Data.userId);
+        const user = datauser.find(u => u.id === decoded_Data.userId);
         if(!user){
             return res.status(404).json({
                 error: "User tidak di temukan"
@@ -88,10 +88,10 @@ app.post('/api/refresh-token', (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => {
-    const token = req.cookies.listRefreshToken;
+    const token = req.cookies.NEW_refreshtoken;
     listRefreshToken = listRefreshToken.filter(t => t !== token);
 
-    res.clearCookie('listRefreshToken');
+    res.clearCookie('NEW_refreshtoken');
 
     return res.status(200).json({
         message: "Logout berhasil"
