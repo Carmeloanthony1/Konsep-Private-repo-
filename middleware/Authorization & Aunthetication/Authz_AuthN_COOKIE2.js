@@ -12,7 +12,7 @@ const datauser = [
 ]
 
 const access_token = "access_token_dummy";
-const refreh_token = "refresh_token_dummy";
+const refresh_token = "refresh_token_dummy";
 
 let Save_refreshtoken = [];
 
@@ -38,7 +38,7 @@ app.post('/api/login', (req, res) => {
     const newaccess_token = JWT.sign(payload, access_token, { expiredIn : '15s' });
     const newrefresh_token = JWT.sign(payload, refreh_token, { expiredIn : '7d' });
 
-    Save_refreshtoken.push(newrefreh_token);
+    Save_refreshtoken.push(newrefresh_token);
 
     res.cookie('refreshcookie', newrefresh_token, {
         httpOnly: true,
@@ -47,7 +47,49 @@ app.post('/api/login', (req, res) => {
     });
 
     return res.status(200).json({
-        message: `Login berhasil, selamat datang ${payload.username}`
+        message: `Login berhasil, selamat datang ${payload.username}`,
+        refresh_token: refresh_token
+    });
+});
+
+app.post('/api/refresh-token', (req, res) => {
+    const token = req.cookies.newrefresh_token;
+    if(!token){
+        return res.status(404).json({
+            error: "Tidak ada token, silahkan login"
+        }); 
+    }
+
+    if(!Save_refreshtoken.includes(token)){
+        return res.status(401).json({
+            error: "Token sudah tidak valid"
+        });
+    }
+
+    JWT.verify(token, refresh_token, (err, decoded_data) => {
+        if(err){
+            return res.status(402).json({
+                error: "token sudah expired"
+            });
+        }
+
+        const user = datauser.find(u => u.id === decoded_data.userID);
+
+        if(!user){
+            return res.status(404).json({
+                error: "user tidak di temukan"
+            });
+        }
+
+        const NEW_ACCESSTOKEN = JWT.sign(
+            { userID: user.id, username: user.username },
+            access_token, { expiredIn: '20s' }
+        );
+
+        return res.status(200).json({
+            message: "Token sudah di perbaharui",
+            access_token: NEW_ACCESSTOKEN
+        });
     });
 });
 
