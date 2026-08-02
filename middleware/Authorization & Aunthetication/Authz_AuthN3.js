@@ -38,3 +38,38 @@ app.post('/api/login', (req, res) => {
         refreshToken: NewRefreshToken
     });
 });
+
+app.post('/api/refresh-token', (req, res) => {
+    const { token } = req.body;
+    if(!token){
+        return res.status(401).json({
+            error: "Token tidak di temukan, silahkan login"
+        });
+    }
+    
+    if(!listRefreshToken.includes(token)){
+        return res.status(403).json({
+            error: "Token tidak valid"
+        });
+    }
+
+    jwt.verify(token, RefreshToken, (err, decoded_data) => {
+        if(err){
+            return res.status(403).json({
+                error: "Refresh token sudah kadarluasa"
+            });
+        }
+
+        const payloadbaru = {
+            id: decoded_data.id,
+            username: decoded_data.username,
+            role: decoded_data.role
+        }
+
+        const accessTokenBaru = jwt.sign(payloadbaru, AccessToken, { expiresIn: '15s' });
+        return res.status(200).json({
+            message: "Token berhasil di perbarui",
+            accessToken: accessTokenBaru
+        });
+    });
+});
