@@ -73,3 +73,16 @@ app.post('/api/refresh-token', (req, res) => {
         });
     });
 });
+
+app.post('/api/logout', (req, res) => {
+    const { token } = req.body;
+    listRefreshToken = listRefreshToken.filter(t => t !== token);
+    return res.status(200).json({
+        message: "Berhasil logout"
+    });
+});
+
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Server berjalan di port ${port}`);
+});
