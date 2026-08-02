@@ -28,7 +28,7 @@ app.post('/api/login', (req, res) => {
         role: user.role
     };
 
-    const NewAccessToken = jwt.sign(userPayload, AccessToken, { expiresIn: '15s' });
+    const NewAccessToken = jwt.sign(userPayload, AccessToken, { expiresIn: '15m' });
     const NewRefreshToken = jwt.sign(userPayload, RefreshToken, { expiresIn: '7d' });
 
     listRefreshToken.push(NewRefreshToken);
