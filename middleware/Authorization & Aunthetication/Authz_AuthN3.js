@@ -29,7 +29,7 @@ app.post('/api/login', (req, res) => {
     };
 
     const NewAccessToken = jwt.sign(userPayload, AccessToken, { expiresIn: '15s' });
-    const NewRefreshToken = jwt.sign(userPayload, RefreshToken, { expriresIn: '7d' });
+    const NewRefreshToken = jwt.sign(userPayload, RefreshToken, { expiresIn: '7d' });
 
     listRefreshToken.push(NewRefreshToken);
     return res.status(200).json({
@@ -40,7 +40,7 @@ app.post('/api/login', (req, res) => {
 });
 
 app.post('/api/refresh-token', (req, res) => {
-    const { token } = req.body;
+    const { token } = req.body; //biar kalau butuh ini gausah nulis req.body.token
     if(!token){
         return res.status(401).json({
             error: "Token tidak di temukan, silahkan login"
@@ -53,7 +53,7 @@ app.post('/api/refresh-token', (req, res) => {
         });
     }
 
-    jwt.verify(token, RefreshToken, (err, decoded_data) => {
+    jwt.verify(token, RefreshToken, (err, decoded_data) => { //inisialisasi variabel decoded_data
         if(err){
             return res.status(403).json({
                 error: "Refresh token sudah kadarluasa"
@@ -65,8 +65,9 @@ app.post('/api/refresh-token', (req, res) => {
             username: decoded_data.username,
             role: decoded_data.role
         }
+        //data user di masukin ke sini
 
-        const accessTokenBaru = jwt.sign(payloadbaru, AccessToken, { expiresIn: '15s' });
+        const accessTokenBaru = jwt.sign(payloadbaru, AccessToken, { expiresIn: '15s' }); //nanti data usernya di pake buat bikin token baru
         return res.status(200).json({
             message: "Token berhasil di perbarui",
             accessToken: accessTokenBaru
@@ -75,10 +76,16 @@ app.post('/api/refresh-token', (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => {
-    const { token } = req.body;
-    listRefreshToken = listRefreshToken.filter(t => t !== token);
+    const { token } = req.body; //destructuring token 
+    listRefreshToken = listRefreshToken.filter(t => t !== token); //biar gausah nulis req.body.token aja sih
     return res.status(200).json({
         message: "Berhasil logout"
+    });
+});
+
+app.get('/api/SHOWREFRESHTOKEN', (req, res) => { //biar bisa lait tokennya aja, aslinya mah jangan 
+    return res.status(200).json({
+        refreshTokens: listRefreshToken
     });
 });
 
