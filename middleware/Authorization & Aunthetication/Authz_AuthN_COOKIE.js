@@ -86,3 +86,19 @@ app.cost('/api/refresh-token', (req, res) => {
         });
     });
 });
+
+app.post('/api/logout', (req, res) => {
+    const token = req.cookies.listRefreshToken;
+    listRefreshToken = listRefreshToken.filter(t => t !== token);
+
+    res.clearCookie('listRefreshToken');
+
+    return res.status(200).json({
+        message: "Logout berhasil"
+    });
+});
+
+const port = 3000;
+app.listen(3000, () => {
+    console.log("Server berjalan di port 3000");
+});
