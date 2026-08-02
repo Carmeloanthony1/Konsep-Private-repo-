@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(express.json());
-app.use(cookieParset()); //biar nanti bisa pake req.cookies
+app.use(cookieParser()); //biar nanti bisa pake req.cookies
 
 const AccessToken = "Access_secret_key";
 const RefreshToken = "Refresh_secret_key";
@@ -48,7 +48,7 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-app.cost('/api/refresh-token', (req, res) => {
+app.post('/api/refresh-token', (req, res) => {
     const token = req.cookies.NEW_refreshtoken;
     if(!token){
         return res.status(401).json({
