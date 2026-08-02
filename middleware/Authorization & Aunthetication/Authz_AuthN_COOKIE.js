@@ -47,3 +47,42 @@ app.post('/api/login', (req, res) => {
         AccessToken: NEW_accesstoken
     });
 });
+
+app.cost('/api/refresh-token', (req, res) => {
+    const token = req.cookies.NEW_refreshtoken;
+    if(!token){
+        return res.status(401).json({
+            error: "Cookie tidak ditemukan"
+        });
+    }
+
+    if(!listRefreshToken){
+        return res.status(403).json({
+            error: "Token tidak valid"
+        });
+    }
+
+    jwt.verify(token, RefreshToken, (err, decoded_Data) => {
+        if(err){
+            return res.status(403),json({
+                error: "Refresh token sudah expired"
+            });
+        }
+
+        const user = users.find(u => u.id === decoded_Data.userId);
+        if(!user){
+            return res.status(404).json({
+                error: "User tidak di temukan"
+            });
+        }
+        const NEW_ACCESSTOKEN = jwt.sign(
+            { userId: user.id, username: user.username },
+            AccessToken, { expiresIn : '20s'}
+        );
+
+        return res.status(200).json({
+            message: "Token berhasil di perbaharui",
+            AccessToken: NEW_ACCESSTOKEN
+        });
+    });
+});
