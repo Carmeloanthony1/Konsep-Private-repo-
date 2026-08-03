@@ -125,3 +125,8 @@ app.delete('/api/logout', (req, res) => {
         message: "Berhasil logout"
     }); 
 });
+
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Server connect di port ${port}`);
+});
