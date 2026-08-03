@@ -81,3 +81,36 @@ app.get('/api/profile', authenticateToken, (req, res) => {
         datauser: req.user
     });
 });
+
+app.post('/api/refresh-token', (req, res) => {
+    const tokencookie = req.cookies.REFRESHTOKEN;
+    if(!tokencookie){
+        return res.status(404).json({
+            error: "refresh token tidak di temukan, silahkan login"
+        }); 
+    }
+
+    if(save_refreshtoken.includes(tokencookie)){
+        return res.status(404).json({
+            error: "Token sudah kadarluasa"
+        });
+    }
+
+    JWT.verify(tokencookie, refresh_secret, (err, decoded) => {
+        if(err){
+            return res.status(402).json({
+                error: "Refresh token sudah kadarluasa"
+            });
+        }
+
+        const new_accesstoken = JWT.sign(
+            { userId: decoded.userId, nama: decoded.nama },
+            access_secret, { expiresIn: '15s' }
+        )
+
+        return res.status(200).json({
+            message: "Berhasil refresh access token",
+            accesstoken: new_accesstoken
+        });
+    });
+}); 
