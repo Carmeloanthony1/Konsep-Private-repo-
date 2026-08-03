@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 const datauser = [
-    {id: 1, nama: "user1", password: "password1"}
+    {id: 1, name: "user1", password: "password1"}
 ];
 
 let save_refreshtoken = [];
@@ -38,8 +38,8 @@ function authenticateToken(req, res, next) {
 }
 
 app.post('/api/login', (req, res) => {
-   const { nama, password } = req.body;
-   if(!nama || !password){
+   const { name, password } = req.body;
+   if(!name || !password){
     return res.status(402).json({
         error: "Silahkan masukan seluruh bagian"
     });
@@ -61,9 +61,9 @@ app.post('/api/login', (req, res) => {
    const accesstoken = JWT.sign(payload, access_secret, { expiresIn : '15s' });
    const refreshtoken = JWT.sign(payload, refresh_secret, { expiresIn : '7d' });
 
-   save_refreshtoken.push(refresh_token);
+   save_refreshtoken.push(refreshtoken);
 
-   res.cookie('REFRESHTOKEN', refresh_token, {
+   res.cookie('REFRESHTOKEN', refreshtoken, {
     httpOnly: true,
     sameSite: 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000
@@ -90,7 +90,7 @@ app.post('/api/refresh-token', (req, res) => {
         }); 
     }
 
-    if(save_refreshtoken.includes(tokencookie)){
+    if(!save_refreshtoken.includes(tokencookie)){
         return res.status(404).json({
             error: "Token sudah kadarluasa"
         });
@@ -104,7 +104,7 @@ app.post('/api/refresh-token', (req, res) => {
         }
 
         const new_accesstoken = JWT.sign(
-            { userId: decoded.userId, nama: decoded.nama },
+            { userId: decoded.userId, name: decoded.name },
             access_secret, { expiresIn: '15s' }
         )
 
@@ -119,7 +119,7 @@ app.delete('/api/logout', (req, res) => {
     const tokencookie = req.cookies.REFRESHTOKEN;
 
     save_refreshtoken = save_refreshtoken.filter(token => token.id !== tokencookie); //seengaja di filter, biar ga muncul token nya
-    res.clearCookie('save_refreshtoken'); //terus jadinya di apus token yang ga muncul dan sisa yang muncul aja 
+    res.clearCookie('REFRESHTOKEN'); //terus jadinya di apus token yang ga muncul dan sisa yang muncul aja 
 
     return res.status(200).json({
         message: "Berhasil logout"
