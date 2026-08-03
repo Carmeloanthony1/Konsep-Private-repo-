@@ -16,6 +16,26 @@ let save_refreshtoken = [];
 const access_secret = "accesstoken";
 const refresh_secret = "refreshtoken";
 
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader.split(' ')[1]; //dipotong jadi 2, kemudian di ambil tokennya
+
+    if(!token){
+        return res.status(404).json({
+            error: "Akses di tolak, access token tidak ada"
+        });
+    }
+
+    JWT.verify(token, access_secret, (err, user) => {
+        if(err){
+            return res.status(402).json({
+                error: "Access token tidak valid, segera refresh token"
+            });
+        }
+        req.user = user;
+        next();
+    });
+}
 app.post('/api/login', (req, res) => {
    const { nama, password } = req.body;
    if(!nama || !password){
