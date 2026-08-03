@@ -24,22 +24,22 @@ app.post('/api/login', (req, res) => {
             error: "Silahkan isi seluruh bagan yang ada"
         });
     }
-    const user = datauser.filter(u => u.username === username && u.password === password);
+    const user = datauser.find(u => u.nama === nama && u.password === password);
 
     const payload = {
         userId: user.id,
         nama: user.nama,
     }
 
-    const accesstoken = JWT.sign(payload, Access_Token, { expiresIn = '15s' });
-    const refreshtoken = JWT.sign(payload, Refresh_Token, { expiresIn = '7d' });
+    const accesstoken = JWT.sign(payload, Access_Token, { expiresIn : '15s' });
+    const refreshtoken = JWT.sign(payload, Refresh_Token, { expiresIn : '7d' });
 
     save_refreshtoken.push(refreshtoken);
 
     res.cookie('refreshtoken_cookie', refreshtoken, {
         httpOnly: true,
         sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 10 * 1000
+        maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.status(200).json({
@@ -49,7 +49,7 @@ app.post('/api/login', (req, res) => {
 });
 
 app.post('/api/refresh-token', (req, res) => {
-    const tokencookie = req.cookie.refreshtoken_cookie;
+    const tokencookie = req.cookies.refreshtoken_cookie;
     if(!tokencookie){
         return res.status(404).json({
             error: "Cookie tidak di temukan"
@@ -67,7 +67,7 @@ app.post('/api/refresh-token', (req, res) => {
             });
         }
         const new_ACCESSTOKEN = JWT.sign(
-            { userId: decoded.userId, username: decoded.username }, 
+            { userId: decoded.userId, nama: decoded.nama }, 
             Access_Token, { expiresIn : "15s"}
         );
 
@@ -79,7 +79,7 @@ app.post('/api/refresh-token', (req, res) => {
 });
 
 app.delete('/api/logout', (req, res) => {
-    const tokencookie = req.cookie.refreshtoken_cookie;
+    const tokencookie = req.cookies.refreshtoken_cookie;
 
     save_refreshtoken = save_refreshtoken.filter(token => token !== tokencookie);
     res.clearCookie('refreshtoken_cookie');
