@@ -36,6 +36,7 @@ function authenticateToken(req, res, next) {
         next();
     });
 }
+
 app.post('/api/login', (req, res) => {
    const { nama, password } = req.body;
    if(!nama || !password){
@@ -73,3 +74,10 @@ app.post('/api/login', (req, res) => {
     accesstoken: accesstoken
    });
 }); 
+
+app.get('/api/profile', authenticateToken, (req, res) => {
+    return res.status(200).json({
+        message: "Berhasil masuk ke page kredensial",
+        datauser: req.user
+    });
+});
