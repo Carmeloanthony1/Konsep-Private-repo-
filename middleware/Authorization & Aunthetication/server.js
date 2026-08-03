@@ -114,3 +114,14 @@ app.post('/api/refresh-token', (req, res) => {
         });
     });
 }); 
+
+app.delete('/api/logout', (req, res) => {
+    const tokencookie = req.cookies.REFRESHTOKEN;
+
+    save_refreshtoken = save_refreshtoken.filter(token => token.id !== tokencookie); //seengaja di filter, biar ga muncul token nya
+    res.clearCookie('save_refreshtoken'); //terus jadinya di apus token yang ga muncul dan sisa yang muncul aja 
+
+    return res.status(200).json({
+        message: "Berhasil logout"
+    }); 
+});
