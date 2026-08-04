@@ -35,3 +35,26 @@ const verifytoken = (req, res, next) => {
         next();
     });
 };
+
+const authorize = (...allowedRoles) => {
+    return (req, res, next) => {
+        if(!req.user || !req.user.role){
+            return res.status(404).json({ error: "Data tidak di temukan/tidak lengkap"});
+        }
+
+        const isAllowed = allowedRoles.includes(req.user.role);
+        if(!isAllowed){
+            return res.status(403).json({
+                error: "Tidak memiliki akses yang sesuai"
+            });
+        }
+        next();
+    };
+};
+
+app.login('/api/login', (req, res) => {
+    const { username, password, role } = req.body;
+    if(!username || !password || !role ){
+        return res.status(403).json({ error: "Silahkan mengisi seluruh bagan yang diperlukan"});
+    }
+}); 
