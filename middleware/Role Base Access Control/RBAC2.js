@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const JWT = require('jsonwebtoken');
-const cookie = require('cookie-parser');
 const cookieParser = require('cookie-parser');
 
 app.use(express.json());
@@ -21,7 +20,7 @@ let save_refreshsecret = [];
 const verifytoken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
 
-    const token = authHeader.split(' ')[1];
+    const token = authHeader && authHeader.split(' ')[1];
     if(!token){
         return res.status(401).json({ error: "Tidak ada token, silahkan login"})
     }
@@ -38,11 +37,11 @@ const verifytoken = (req, res, next) => {
 
 const authorize = (...allowedRoles) => {
     return (req, res, next) => {
-        if(!req.user || !req.user.role){
+        if(!req.user || !req.user.ROLE){
             return res.status(404).json({ error: "Data tidak di temukan/tidak lengkap"});
         }
 
-        const isAllowed = allowedRoles.includes(req.user.role);
+        const isAllowed = allowedRoles.includes(req.user.ROLE);
         if(!isAllowed){
             return res.status(403).json({
                 error: "Tidak memiliki akses yang sesuai"
@@ -53,22 +52,27 @@ const authorize = (...allowedRoles) => {
 };
 
 app.post('/api/login', (req, res) => {
-    const { username, password, role } = req.body;
-    if(!username || !password || !role ){
+    const { username, password } = req.body;
+    if(!username || !password ){
         return res.status(403).json({ error: "Silahkan mengisi seluruh bagan yang diperlukan"});
     }
 
     const user = datauser.find(u => u.username === username && u.password === password);
+    if(!user){
+        return res.status(404).json({
+            error: "Username atau password salah"
+        });
+    }
     const payload = {
         user_ID : user.id,
         user_USERNAME : user.username,
-        user_ROLE : user.role
-    }
+        ROLE : user.role
+    };
 
     const access_token = JWT.sign(payload, access_secret, { expiresIn : '15s' });
     const refresh_token = JWT.sign(payload, refresh_secret, { expiresIn : '7d' });
 
-    save_refreshsecret.push(refreshtoken);
+    save_refreshsecret.push(refresh_token);
 
     res.cookie('refreshtoken_cookie', refresh_token, {
         httpOnly : true,
@@ -77,12 +81,13 @@ app.post('/api/login', (req, res) => {
     });
 
     res.status(200).json({
-        message: `Selamat datang ${payload.user_USERNAME}`
+        message: `Selamat datang ${payload.user_USERNAME}`,
+        access_token: access_token
     });
 }); 
 
-app.post('/api/refresh-token', verifytoken, (req, res) => {
-    const tokencookie = req.cookie.refreshtoken_cookie;
+app.post('/api/refresh-token', (req, res) => {
+    const tokencookie = req.cookies.refreshtoken_cookie;
     if(!tokencookie){
         return res.status(403).json({
             error: "Tidak ada token, silahkan login"
@@ -103,8 +108,8 @@ app.post('/api/refresh-token', verifytoken, (req, res) => {
         }
 
         const NEW_accesstoken = JWT.sign(
-            {user_ID: decoded.user_ID, user_USERNAME: decoded.user_USERNAME, user_ROLE: decoded.user_ROLE}, 
-            access_token, { expiresIn : '15s' }
+            {user_ID: decoded.user_ID, user_USERNAME: decoded.user_USERNAME, ROLE: decoded.ROLE}, 
+            access_secret, { expiresIn : '15s' }
         );
         
         return res.status(200).json({
@@ -114,28 +119,28 @@ app.post('/api/refresh-token', verifytoken, (req, res) => {
     });
 });
 
-app.post('/api/convert/basic', verifytoken, allowedRoles("FREE_USER", "PREMIUM_USER", "ADMIN"), (req, res) => {
+app.post('/api/convert/basic', verifytoken, authorize("FREE_USER", "PREMIUM_USER", "ADMIN"), (req, res) => {
     return res.status(200).json({
         message: "Page ini boleh di buka oleh siapa aja"
     });
 });
 
-app.post('/api/convert/pro', verifytoken, allowedRoles("PREMIUM_USER", "ADMIN"), (req, res) => {
+app.post('/api/convert/pro', verifytoken, authorize("PREMIUM_USER", "ADMIN"), (req, res) => {
     return res.status(200).json({
         message: "Page ini boleh di buka oleh premium user dan admin"
     });
 });
 
-app.delete('/api/convert/delete', verifytoken, allowedRoles("ADMIN"), (req, res) => {
+app.delete('/api/convert/delete', verifytoken, authorize("ADMIN"), (req, res) => {
     return res.status(200).json({
         message: "Page ini boleh di buka oleh admin"
     });
 });
 
-app.post('/api/logout', verifytoken, allowedRoles("FREE_USER", "PREMIUM_USER", "ADMIN"), (req, res) => {
-    const tokencookie = req.cookie.refreshtoken_cookie;
+app.delete('/api/logout', (req, res) => {
+    const tokencookie = req.cookies.refreshtoken_cookie;
     save_refreshsecret = save_refreshsecret.filter(token => token !== tokencookie);
-    res.clearCookies(save_refreshsecret);
+    res.clearCookie('refreshtoken_cookie');
 
     return res.status(200).json({
         message: "Berhasil log out"
