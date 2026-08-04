@@ -7,7 +7,7 @@ const verifytoken = (req, res, next) => {
     req.user = {
         id: "user1",
         password: "password1",
-        role: "USER"
+        role: "MANAGER"
     };
     next();
 };
@@ -60,3 +60,7 @@ app.get('/api/reports', verifytoken, authorize("ADMIN", "MANAGER"), (req, res) =
     });
 });
 
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Server connect ke port ${port}`);
+});
