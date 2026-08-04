@@ -57,4 +57,26 @@ app.login('/api/login', (req, res) => {
     if(!username || !password || !role ){
         return res.status(403).json({ error: "Silahkan mengisi seluruh bagan yang diperlukan"});
     }
+
+    const user = datauser.find(u => u.username === username && u.password === password);
+    const payload = {
+        user_ID : user.id,
+        user_USERNAME : user.username,
+        user_ROLE : user.role
+    }
+
+    const access_token = JWT.sign(payload, access_secret, { expiresIn : '15s' });
+    const refresh_token = JWT.sign(payload, refresh_secret, { expiresIn : '7d' });
+
+    save_refreshsecret.push(refreshtoken);
+
+    res.cookie('refreshtoken_cookie', refresh_token, {
+        httpOnly : true,
+        sameSite : 'strict',
+        maxAge : 7 * 60 * 60 * 24 * 1000
+    });
+
+    res.status(200).json({
+        message: `Selamat datang ${payload.user_USERNAME}`
+    });
 }); 
