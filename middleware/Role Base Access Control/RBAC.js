@@ -3,7 +3,7 @@ const app = express();
 
 app.use(express.json());
 
-const verifytoken = (req, res, next) => {
+const verifytoken = (req, res, next) => { //dummy data dan token
     req.user = {
         id: "user1",
         password: "password1",
@@ -12,21 +12,22 @@ const verifytoken = (req, res, next) => {
     next();
 };
 
-const authorize = (...allowedRoles) => {
+const authorize = (...allowedRoles) => { //fungsi yang bener main disini
     return (req, res, next) => {
-        if(!req.user || !req.user.role){
+        if(!req.user || !req.user.role){ //ini cuman checking doang, semisal user nya itu masih ada atau ga
+            //sapa tau join tapi ternyata bukan user
             return res.status(401).json({
                 success: false,
                 error: "Belum terautentikasi"
             });
         }
         
-        const isAllowed = allowedRoles.includes(req.user.role);
+        const isAllowed = allowedRoles.includes(req.user.role); //ini biar kasih tau nanti roles apa yang boleh
 
         if(!allowedRoles){
             return res.status(403).json({
                 success: false,
-                error: "Role anda tidak memiliki izin untuk menggunakan fitur ini"
+                error: "Role anda tidak memiliki izin untuk menggunakan fitur ini" //kalau ga boleh di kick
             });
         }
         next();
@@ -46,7 +47,7 @@ app.post('/api/edit', verifytoken, (req, res) => {
     });
 });
 
-app.delete('/api/delete', verifytoken, authorize("ADMIN"), (req, res) => {
+app.delete('/api/delete', verifytoken, authorize("ADMIN"), (req, res) => { //cara masang nya tinggal kasih tau nama role nya 
     res.json({
         message: `Ini adalah rout private, hanya admin yang bisa masuk ke sini`,
         role: req.user.role
