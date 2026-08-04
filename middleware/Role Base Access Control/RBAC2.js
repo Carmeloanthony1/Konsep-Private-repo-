@@ -52,7 +52,7 @@ const authorize = (...allowedRoles) => {
     };
 };
 
-app.login('/api/login', (req, res) => {
+app.post('/api/login', (req, res) => {
     const { username, password, role } = req.body;
     if(!username || !password || !role ){
         return res.status(403).json({ error: "Silahkan mengisi seluruh bagan yang diperlukan"});
@@ -80,3 +80,58 @@ app.login('/api/login', (req, res) => {
         message: `Selamat datang ${payload.user_USERNAME}`
     });
 }); 
+
+app.post('/api/refresh-token', verifytoken, (req, res) => {
+    const tokencookie = req.cookie.refreshtoken_cookie;
+    if(!tokencookie){
+        return res.status(403).json({
+            error: "Tidak ada token, silahkan login"
+        });
+    }
+
+    if(!save_refreshsecret.includes(tokencookie)){
+        return res.status(403).json({
+            error: "Refresh token sudah expired, silahkan login lagi"
+        });
+    }
+
+    JWT.verify(tokencookie, refresh_secret, (err, decoded) => {
+        if(err){
+            return res.status(401).json({
+                error: "Token tidak cocok/kadaluasa, silahkan login"
+            });
+        }
+
+        const NEW_accesstoken = JWT.sign(
+            {user_ID: decoded.user_ID, user_USERNAME: decoded.user_USERNAME, user_ROLE: decoded.user_ROLE}, 
+            access_token, { expiresIn : '15s' }
+        );
+        
+        return res.status(200).json({
+            message: "Token sudah di refresh",
+            access_token: NEW_accesstoken
+        });
+    });
+});
+
+app.post('/api/convert/basic', verifytoken, allowedRoles("FREE_USER", "PREMIUM_USER", "ADMIN"), (req, res) => {
+    return res.status(200).json({
+        message: "Page ini boleh di buka oleh siapa aja"
+    });
+});
+
+app.post('/api/convert/pro', verifytoken, allowedRoles("PREMIUM_USER", "ADMIN"), (req, res) => {
+    return res.status(200).json({
+        message: "Page ini boleh di buka oleh premium user dan admin"
+    });
+});
+
+app.delete('/api/convert/delete', verifytoken, allowedRoles("ADMIN"), (req, res) => {
+    return res.status(200).json({
+        message: "Page ini boleh di buka oleh admin"
+    });
+});
+
+app.post('/api/logout', verifytoken, allowedRoles("FREE_USER", "PREMIUM_USER", "ADMIN"), (req, res) => {
+    
+});
