@@ -133,5 +133,15 @@ app.delete('/api/convert/delete', verifytoken, allowedRoles("ADMIN"), (req, res)
 });
 
 app.post('/api/logout', verifytoken, allowedRoles("FREE_USER", "PREMIUM_USER", "ADMIN"), (req, res) => {
-    
+    const tokencookie = req.cookie.refreshtoken_cookie;
+    save_refreshsecret = save_refreshsecret.filter(token => token !== tokencookie);
+    res.clearCookies(save_refreshsecret);
+
+    return res.status(200).json({
+        message: "Berhasil log out"
+    });
+});
+
+app.listen(3000, () => {
+    console.log("Server connect di port 3000");
 });
