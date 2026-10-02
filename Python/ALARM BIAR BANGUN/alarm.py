@@ -5,7 +5,7 @@ import os
 def notification_termux(title, pesan):
     """ngirimin notifikasi lokal ke hp secara offline lewat termux"""
     os.system(
-        f"termux-notification -t {title} -c {pesan} --priority high"
+        f'termux-notification -t "{title}" -c "{pesan}" --priority high'
     )
     #pada bagian ini, kita kasih title nya nanti sesuai dengan urgensi yang di perlukan
     # -c itu pesan 
@@ -25,7 +25,7 @@ def input_waktu():
                 target_alarm = sekarang.replace(hour = jam, minute = menit, second = 0, microsecond = 0)
 
                 if (target_alarm <= sekarang):
-                    target_alarm += datetime.timedelta(day=1)
+                    target_alarm += datetime.timedelta(days=1)
                 
                 """
                 kalau target yang di set itu waktunya ternyata udah lewat, maka dia
