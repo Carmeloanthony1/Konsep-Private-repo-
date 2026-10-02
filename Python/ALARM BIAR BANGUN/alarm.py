@@ -1,7 +1,7 @@
 import time
 import datetime
 import os
-from dotenv import load_env
+from dotenv import load_dotenv
 import requests
 
 load_dotenv()
