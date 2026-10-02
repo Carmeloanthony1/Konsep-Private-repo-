@@ -29,9 +29,9 @@ def notification_discord(judul_notif, pesan):
     try:
         response = requests.post(DC_WEBHOOK_URL, json=payload, timeout=5)
         if response.status_code in [200, 204]:
-            print("Notifikasi berhasil terkirim")
+            print("[STATUS] : Notifikasi berhasil terkirim")
         else:
-            print("Notifikasi gagal terkirim")
+            print("[STATUS] : Notifikasi gagal terkirim")
     except Exception as e:
         print(f"Error Discord : {e}")
 
@@ -66,13 +66,35 @@ def input_waktu():
 
                 return target_alarm
             else:
-                print("Jam harus 0-23 dan menit harus 0-59! Coba lagi.\n")
+                print("[STATUS] : Jam harus 0-23 dan menit harus 0-59! Coba lagi.\n")
 
         except ValueError:
-            print("Input harus berupa angka! coba lagi.\n")
+            print("[STATUS] : Input harus berupa angka! coba lagi.\n")
+
+
+def jalankan_alarm(target_alarm):
+    print("[STATUS] Menunggu waktu alarm (CTRL + C untuk membatalkan)")
+    while True:
+        sekarang = datetime.datetime.now()
+        if sekarang >= target_alarm:
+            print("[STATUS] BANGONNN!!!!!")
+            format_waktu = target_alarm.strftime("%H:%M")
+            judul_notif = f"WAKTUNYA BANGUN! {target_alarm}"
+            pesan = "Selesaikan 3 pertanyaan ini untuk membuka HP"
+            notification_discord(judul_notif, pesan)
+            try:
+                while True:
+                    print("[STATUS] : Notifikasi berhasil terkirim")
+                    time.sleep(5)
+            except KeyboardInterrupt:
+                print("[STATUS] : Alarm berhasil di matikan, selamat beraktivitas")
+                break
+
+        time.sleep(2)
 
 if __name__ == "__main__" :
     target = input_waktu()
+    jalankan_alarm(target)
 
 
 
