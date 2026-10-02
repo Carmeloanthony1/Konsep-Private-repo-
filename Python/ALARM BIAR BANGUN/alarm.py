@@ -1,16 +1,42 @@
 import time
 import datetime
 import os
+from dotenv import load_env
+import requests
 
-def notification_termux(title, pesan):
-    """ngirimin notifikasi lokal ke hp secara offline lewat termux"""
-    os.system(
-        f'termux-notification -t "{title}" -c "{pesan}" --priority high'
-    )
-    #pada bagian ini, kita kasih title nya nanti sesuai dengan urgensi yang di perlukan
-    # -c itu pesan 
-    #--priority high itu biar notifikasi kita ada di paling atas
+load_dotenv()
+DC_WEBHOOK_URL = os.getenv("discord_bot")
 
+def notification_discord(judul_notif, pesan):
+    """ngirim notif lewat discord"""
+    if not DC_WEBHOOK_URL:
+        print("ERROR: DC_WEBHOOK_URL TIDAK DI TEMUKAN DI ENV")
+        return
+
+    payload = {
+        "username":"Alarm Bot",
+        "avatar_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4whOBKg3khP5cqAV90Y-N77-sdxyarrKCwJMdzLZkZA&s=10",
+        "embeds": [
+            {
+                "title": f"{judul_notif}",
+                "description": pesan,
+                "color": 15158332,
+                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            }
+        ],
+    }
+
+    try:
+        response = requests.post(DC_WEBHOOK_URL, json=payload, timeout=5)
+        if response.status_code in [200, 204]:
+            print("Notifikasi berhasil terkirim")
+        else:
+            print("Notifikasi gagal terkirim")
+    except Exception as e:
+        print(f"Error Discord : {e}")
+
+    #isi payload ini gunanya biar notif biar jelas dari mana dan gimana
+ 
 def input_waktu():
     print("PENGATURAN WAKTU")
     while True:
@@ -31,12 +57,13 @@ def input_waktu():
                 kalau target yang di set itu waktunya ternyata udah lewat, maka dia
                 akan auto set untuk ke esokan hari nya. 
                 """
+                print(f"Waktu alarm di set pada {jam}:{menit} WIB")
+
                 format_waktu = target_alarm.strftime("%H:%M")
                 judul_notif = f"ALARM DI SET PADA PUKUL {format_waktu} WIB"
-                pesan_notif = f"anda akan di bangunkan pukul {format_waktu} WIB"
-                notification_termux(judul_notif, pesan_notif)
+                pesan = f"anda akan di bangunkan pukul {format_waktu} WIB"
+                notification_discord(judul_notif, pesan)
 
-                print(f"Waktu alarm di set pada {jam}:{menit} WIB")
                 return target_alarm
             else:
                 print("Jam harus 0-23 dan menit harus 0-59! Coba lagi.\n")
