@@ -66,12 +66,10 @@ def stopsound():
     """Menghentikan pemutar mpv"""
     global player_process
 
-    # 1. Matikan via instance Popen jika ada
     if player_process:
         player_process.terminate()
         player_process = None
 
-    # 2. Pengaman ekstra: sapu bersih semua proses mpv di Termux
     subprocess.run(
         ["killall", "mpv"],
         stdout=subprocess.DEVNULL,
@@ -123,11 +121,9 @@ def jalankan_alarm(target_alarm):
             pesan = "Selesaikan 3 pertanyaan ini untuk membuka HP"
             notification_discord(judul_notif, pesan)
 
-            # Cukup panggil playsound() SEKALI SAJA karena mpv sudah di-set --loop=inf
             playsound()
 
             try:
-                # Tahan program tetap hidup sambil nungguin input CTRL + C dari user
                 while True:
                     time.sleep(1)
             except KeyboardInterrupt:
@@ -139,6 +135,12 @@ def jalankan_alarm(target_alarm):
 
         time.sleep(2)
 
+def soal_matematika():
+    soal matematika = {
+        [
+            1. 
+        ]
+    }
 
 if __name__ == "__main__":
     target = input_waktu()
