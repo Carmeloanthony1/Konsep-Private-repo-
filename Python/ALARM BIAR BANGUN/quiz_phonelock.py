@@ -33,6 +33,7 @@ def run_gate(target_score = 3):
         if not item:
             print("Data di table vocab kosong")
 
+<<<<<<< HEAD
         print(f"\n[SKOR : {score}/{target_score}]")
         print(f"Hanzi : {item['Hanzi']}")
         print(f"Hanzi : {item['Pinyin']}")
@@ -40,3 +41,6 @@ def run_gate(target_score = 3):
         user_answer = input("Jawaban (arti) : ").strip()
 
     
+=======
+        print(f"\n[SKOR : {score}/{target_score}]")
+>>>>>>> d5c074f98a20b527f938a64fdb8f2389aec3de9d
